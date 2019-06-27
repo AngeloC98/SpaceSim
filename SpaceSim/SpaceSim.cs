@@ -25,7 +25,7 @@ namespace SpaceSim
 
         List<Sphere> spheres;
 
-        Sphere sun;
+        Sphere sun, earth, mars, jupiter, saturn, uranus, moon;
 
         Spaceship spaceship;
         Vector3 spaceshipPosition = new Vector3(0f, 28f, 77f);
@@ -75,9 +75,33 @@ namespace SpaceSim
 
             spheres = new List<Sphere>();
 
+            // Planets
 
             spheres.Add(sun = new Sphere(Matrix.Identity, Color.Yellow, 30));
             sun.Transform = Matrix.CreateScale(2);
+
+            spheres.Add(earth = new Sphere(Matrix.Identity, Color.DeepSkyBlue, 30));
+            earth.Transform = Matrix.CreateScale(1);
+            earth.Transform = Matrix.CreateTranslation(16, 0, 0);
+
+            spheres.Add(mars = new Sphere(Matrix.Identity, Color.Red, 30));
+            mars.Transform = Matrix.CreateScale(0.6f);
+            mars.Transform = Matrix.CreateTranslation(21, 0, 0);
+
+            spheres.Add(jupiter = new Sphere(Matrix.Identity, Color.Orange, 30));
+            jupiter.Transform = Matrix.CreateScale(1.7f);
+            jupiter.Transform = Matrix.CreateTranslation(27, 0, 0);
+
+            spheres.Add(saturn = new Sphere(Matrix.Identity, Color.Khaki, 30));
+            saturn.Transform = Matrix.CreateScale(1.7f);
+            saturn.Transform = Matrix.CreateTranslation(36, 0, 0);
+
+            spheres.Add(uranus = new Sphere(Matrix.Identity, Color.Cyan, 30));
+            saturn.Transform = Matrix.CreateScale(1.5f);
+            saturn.Transform = Matrix.CreateTranslation(43, 0, 0);
+
+
+
 
 
 
