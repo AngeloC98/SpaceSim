@@ -100,7 +100,12 @@ namespace SpaceSim
             saturn.Transform = Matrix.CreateScale(1.5f);
             saturn.Transform = Matrix.CreateTranslation(43, 0, 0);
 
-
+            //  Random Y-rotation
+            Random random = new Random();
+            foreach (Sphere planet in spheres)
+            {
+                planet.Transform *= Matrix.CreateRotationY((float)(random.NextDouble() * Math.PI * 2));
+            }
 
 
 
