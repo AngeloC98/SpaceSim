@@ -97,8 +97,8 @@ namespace SpaceSim
             saturn.Transform = Matrix.CreateTranslation(36, 0, 0);
 
             spheres.Add(uranus = new Sphere(Matrix.Identity, Color.Cyan, 30));
-            saturn.Transform = Matrix.CreateScale(1.5f);
-            saturn.Transform = Matrix.CreateTranslation(43, 0, 0);
+            uranus.Transform = Matrix.CreateScale(1.5f);
+            uranus.Transform = Matrix.CreateTranslation(43, 0, 0);
 
             //  Random Y-rotation
             Random random = new Random();
@@ -182,6 +182,23 @@ namespace SpaceSim
 
             skybox.Transform = Matrix.CreateScale(1000f) * Matrix.CreateTranslation(cameraPosition);
 
+            TimeSpan elapsedGameTime = gameTime.ElapsedGameTime;
+
+            //  Planet rotation
+            Matrix earthRotation = Matrix.CreateRotationY((float)(gameTime.ElapsedGameTime.TotalSeconds * 0.15f));
+            earth.Transform = earth.Transform * earthRotation;
+
+            Matrix marsRotation = Matrix.CreateRotationY((float)(gameTime.ElapsedGameTime.TotalSeconds * 0.20f));
+            mars.Transform = mars.Transform * marsRotation;
+
+            Matrix jupiterRotation = Matrix.CreateRotationY((float)(gameTime.ElapsedGameTime.TotalSeconds * 0.25f));
+            jupiter.Transform = jupiter.Transform * jupiterRotation;
+
+            Matrix saturnRotation = Matrix.CreateRotationY((float)(gameTime.ElapsedGameTime.TotalSeconds * 0.35f));
+            saturn.Transform = saturn.Transform * saturnRotation;
+
+            Matrix uranusRotation = Matrix.CreateRotationY((float)(gameTime.ElapsedGameTime.TotalSeconds * 0.5f));
+            uranus.Transform = uranus.Transform * uranusRotation;
 
 
             base.Update(gameTime);
