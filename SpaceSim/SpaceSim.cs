@@ -229,8 +229,8 @@ namespace SpaceSim
             rollVelocity = (float)(rollVelocity + (LFSpeed * elapsedGameTime.TotalSeconds));
 
             //  sets max speed
-            if (rollVelocity > 10) rollVelocity = 10;
-            else if (rollVelocity < -10) rollVelocity = -10;
+            if (rollVelocity > 200) rollVelocity = 200;
+            else if (rollVelocity < -200) rollVelocity = -200;
             
             //  slows down velocity if keys aren't pressed
             if (!aKeyDown && !dKeyDown) rollVelocity *= 0.99f;
@@ -243,8 +243,8 @@ namespace SpaceSim
             forwardVelocity = (float)(forwardVelocity + (UDSpeed * elapsedGameTime.TotalSeconds));
 
             //  sets max speed
-            if (forwardVelocity > 10) forwardVelocity = 10;
-            else if (forwardVelocity < -10) forwardVelocity = -10;
+            if (forwardVelocity > 100) forwardVelocity = 100;
+            else if (forwardVelocity < -100) forwardVelocity = -100;
 
             //  slows down velocity if keys aren't pressed
             if (!wKeyDown && !sKeyDown) forwardVelocity *= 0.99f;
