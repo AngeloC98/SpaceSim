@@ -27,6 +27,7 @@ namespace SpaceSim
 
         Sphere sun, earth, mars, jupiter, saturn, uranus, moon;
         double moonRotation = 0;
+        float rollVelocity, forwardVelocity;
 
         Spaceship spaceship;
         Vector3 spaceshipPosition = new Vector3(0f, 28f, 77f);
@@ -110,9 +111,6 @@ namespace SpaceSim
                 planet.Transform *= Matrix.CreateRotationY((float)(random.NextDouble() * Math.PI * 2));
             }
 
-
-
-
             base.Initialize();
         }
 
@@ -156,6 +154,8 @@ namespace SpaceSim
                 sphere.Draw();
             }
 
+            spaceship.Draw();
+
 
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
@@ -166,6 +166,8 @@ namespace SpaceSim
 
         protected override void Update(GameTime gameTime)
         {
+            screenCenter = new Vector2((Window.ClientBounds.Width / 2), (Window.ClientBounds.Height / 2));
+
             cameraPosition = Vector3.Transform(spaceshipFollowPoint, spaceship.Transform);
             cameraLookAt = Vector3.Transform(spaceshipLookAtPoint, spaceship.Transform);
             cameraOrientationMatrix = spaceshipOrientationMatrix;
@@ -184,8 +186,6 @@ namespace SpaceSim
             lastMouseButton = mouseButton;
 
             skybox.Transform = Matrix.CreateScale(1000f) * Matrix.CreateTranslation(cameraPosition);
-
-            TimeSpan elapsedGameTime = gameTime.ElapsedGameTime;
 
             //  Planet rotation
             Matrix earthRotation = Matrix.CreateRotationY((float)(gameTime.ElapsedGameTime.TotalSeconds * 0.15f));
@@ -214,6 +214,45 @@ namespace SpaceSim
             moon.Transform *= Matrix.CreateRotationY((float)(moonRotation));
             moon.Transform *= Matrix.CreateRotationX((float)(Math.PI / 4));
             moon.Transform *= Matrix.CreateTranslation(Vector3.Transform(Vector3.Zero, earth.Transform));
+
+            //  Distance between mouse pos and screen center
+            float mouseXPosition = -(mousePosition.X - screenCenter.X) / screenCenter.X;
+            float mouseYPosition = -(mousePosition.Y - screenCenter.Y) / screenCenter.Y;
+
+            TimeSpan elapsedGameTime = gameTime.ElapsedGameTime;
+
+            //  Change yaw/pitch based on distance between mouse and screen center position
+            float yawChange = (float)(mouseXPosition * (double)elapsedGameTime.TotalSeconds);
+            float pitchChange = (float)(mouseYPosition * (double)elapsedGameTime.TotalSeconds);
+
+            double LFSpeed = ((aKeyDown ? -1 : 0) + (dKeyDown ? 1 : 0)) * 5;
+            rollVelocity = (float)(rollVelocity + (LFSpeed * elapsedGameTime.TotalSeconds));
+
+            //  sets max speed
+            if (rollVelocity > 10) rollVelocity = 10;
+            else if (rollVelocity < -10) rollVelocity = -10;
+            
+            //  slows down velocity if keys aren't pressed
+            if (!aKeyDown && !dKeyDown) rollVelocity *= 0.99f;
+            float rollChange = (float)(rollVelocity * elapsedGameTime.TotalSeconds);
+
+            RotateOrientationMatrixByYawPitchRoll(ref spaceshipOrientationMatrix, yawChange, pitchChange, rollChange);
+            spaceship.Transform = spaceshipOrientationMatrix * Matrix.CreateTranslation(spaceshipPosition);
+
+            double UDSpeed = ((wKeyDown ? 1 : 0) + (sKeyDown ? -0.5 : 0)) * 1;
+            forwardVelocity = (float)(forwardVelocity + (UDSpeed * elapsedGameTime.TotalSeconds));
+
+            //  sets max speed
+            if (forwardVelocity > 10) forwardVelocity = 10;
+            else if (forwardVelocity < -10) forwardVelocity = -10;
+
+            //  slows down velocity if keys aren't pressed
+            if (!wKeyDown && !sKeyDown) forwardVelocity *= 0.99f;
+
+            Vector3 sPosition = spaceshipPosition;
+            Vector3 fVelocity = (forwardVelocity * spaceshipOrientationMatrix.Forward) * (float)elapsedGameTime.TotalSeconds;
+            spaceshipPosition = sPosition + fVelocity;
+            Console.WriteLine(rollVelocity);
 
             base.Update(gameTime);
         }
