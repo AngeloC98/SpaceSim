@@ -24,6 +24,7 @@ namespace SpaceSim
         public static GraphicsDevice Graphics;
 
         List<Sphere> spheres;
+        List<Bullet> bullets;
 
         Sphere sun, earth, mars, jupiter, saturn, uranus, moon;
         double moonRotation = 0;
@@ -76,6 +77,7 @@ namespace SpaceSim
             spriteBatch = new SpriteBatch(Graphics);
 
             spheres = new List<Sphere>();
+            bullets = new List<Bullet>();
 
             // Planets
 
@@ -154,9 +156,12 @@ namespace SpaceSim
                 sphere.Draw();
             }
 
+            foreach (Bullet bullet in bullets)
+            {
+                bullet.Draw();
+            }
+
             spaceship.Draw();
-
-
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
             spriteBatch.Draw(reticle, new Vector2(mousePosition.X - reticleHalfWidth, mousePosition.Y - reticleHalfHeight), Color.White);
@@ -252,7 +257,25 @@ namespace SpaceSim
             Vector3 sPosition = spaceshipPosition;
             Vector3 fVelocity = (forwardVelocity * spaceshipOrientationMatrix.Forward) * (float)elapsedGameTime.TotalSeconds;
             spaceshipPosition = sPosition + fVelocity;
-            Console.WriteLine(rollVelocity);
+
+            if (mouseDown)
+            {
+                bullets.Add(new Bullet(Vector3.Transform(bulletSpawnPosition, spaceship.Transform), spaceshipOrientationMatrix.Forward * (forwardVelocity + 10)));
+            }
+
+            foreach (Bullet bullet in bullets)
+            {
+                bullet.Update((float)elapsedGameTime.TotalSeconds);
+            }
+
+            //  remove bullet if length > 200
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                if(bullets[i].position.Length() > 200)
+                {
+                    bullets.RemoveAt(i);
+                }
+            }
 
             base.Update(gameTime);
         }
